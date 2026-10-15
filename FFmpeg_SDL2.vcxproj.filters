@@ -2,6 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="FFmpeg_SDL2.cpp" />
+    <ClCompile Include="aimain.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>

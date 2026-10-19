@@ -1,5 +1,5 @@
 #include <SDL.h>
-
+#include <windows.h>
 extern "C" {
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
@@ -11,6 +11,9 @@ extern "C" {
 }
 
 int main(int argc, char* argv[]) {
+
+	SetConsoleOutputCP(CP_UTF8);   // 让控制台按 UTF-8 解释输出
+    SetConsoleCP(CP_UTF8);         // 输入也设为 UTF-8（可选）
 	
 	AVFormatContext* avf_context = NULL;
 	int ret = avformat_open_input(&avf_context, "C:\\Users\\asus\\Desktop\\test.mp4", NULL, NULL);
@@ -26,24 +29,55 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	int videoindex = 1;
-	for (int i = 0; i < avf_context->nb_streams; i++)
-	{
-		if (avf_context->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
-		{
-			videoindex = i;
-		}
-	}
+	//int videoindex = 1;
+	//for (int i = 0; i < avf_context->nb_streams; i++)
+	//{
+	//	if (avf_context->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
+	//	{
+	//		videoindex = i;
+	//	}
+	//}
 
 	const AVCodec* decoder_ret = NULL;
-	av_find_best_stream(avf_context, AVMEDIA_TYPE_VIDEO, -1, -1, &decoder_ret, 0);
+	int videoindex = av_find_best_stream(avf_context, AVMEDIA_TYPE_VIDEO, -1, -1, &decoder_ret, 0);
 	if (decoder_ret == NULL)
 	{
 		SDL_Log("av_find_best_stream error");
 		return -1;
 	}
-	printf(decoder_ret->name);
+	//printf(decoder_ret->name);
 
+	// 寻找解码器
+	const AVCodec* avcodec_dec = avcodec_find_decoder(avf_context->streams[videoindex]->codecpar->codec_id);
+	if (avcodec_dec == NULL)
+	{
+		SDL_Log("avcodec_find_decoder error");
+		return -1;
+	}
+
+	// 创建AVCodecContext拷贝流
+	AVCodecContext* av_codec_context = avcodec_alloc_context3(avcodec_dec);
+	if (avcodec_parameters_to_context(av_codec_context, avf_context->streams[videoindex]->codecpar) < 0)
+	{
+		SDL_Log("avcodec_parameters_to_context error");
+		return -1;
+	}
+
+	// 打开解码器
+	if (avcodec_open2(av_codec_context, avcodec_dec, NULL) != 0)
+	{
+		SDL_Log("avcodec_open2 error");
+		return -1;
+	}
+
+	// AV_FORMAT_INPUT 封装格式
+	printf("av input format = %s\n",avf_context->iformat->name);
+	// AVStreams 个数
+	printf("av streams = %d\n", avf_context->nb_streams);
+	// 输入视频 AVStream 数组
+	printf("输入视频 AVStream 数组 = %d\n", avf_context->streams);
+	printf("视频时长 = %d\n", avf_context->duration);
+	printf("输入视频总的码率（视频、音频、字幕等） = %d\n", avf_context->bit_rate);
 
 
 	return 0;

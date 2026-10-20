@@ -70,15 +70,18 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	// AV_FORMAT_INPUT 封装格式
+	// AV_FORMAT_INPUT 封装格式 相关
 	printf("av input format = %s\n",avf_context->iformat->name);
+	printf("视频时长 = %d\n", avf_context->duration);
+	printf("输入视频总的码率（视频、音频、字幕等） = %d\n", avf_context->bit_rate);
+	printf("封装格式长名称 = %s", avf_context->iformat->long_name);
+	printf("封装格式扩展名 = %s", avf_context->iformat->extensions);
+
+	// 编解码相关
 	// AVStreams 个数
 	printf("av streams = %d\n", avf_context->nb_streams);
 	// 输入视频 AVStream 数组
 	printf("输入视频 AVStream 数组 = %d\n", avf_context->streams);
-	printf("视频时长 = %d\n", avf_context->duration);
-	printf("输入视频总的码率（视频、音频、字幕等） = %d\n", avf_context->bit_rate);
-
 
 	return 0;
 }

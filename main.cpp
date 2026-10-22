@@ -74,14 +74,35 @@ int main(int argc, char* argv[]) {
 	printf("av input format = %s\n",avf_context->iformat->name);
 	printf("视频时长 = %d\n", avf_context->duration);
 	printf("输入视频总的码率（视频、音频、字幕等） = %d\n", avf_context->bit_rate);
-	printf("封装格式长名称 = %s", avf_context->iformat->long_name);
-	printf("封装格式扩展名 = %s", avf_context->iformat->extensions);
+	printf("封装格式长名称 = %s \n", avf_context->iformat->long_name);
+	printf("封装格式扩展名 = %s \n", avf_context->iformat->extensions);
 
 	// 编解码相关
 	// AVStreams 个数
 	printf("av streams = %d\n", avf_context->nb_streams);
 	// 输入视频 AVStream 数组
 	printf("输入视频 AVStream 数组 = %d\n", avf_context->streams);
+	for (int i = 0; i < avf_context->nb_streams;i++)
+	{
+		// 流内的信息
+		printf("avf_context->streams id = %d \n", avf_context->streams[i]->id);
+		printf("avf_context->streams[i]->codecpar->codec_type  = %d \n", avf_context->streams[i]->codecpar->codec_type);
+		printf("avf_context->streams[i]->time_base  = %d \n", avf_context->streams[i]->time_base);
+		printf("流帧率  = %d \n", avf_context->streams[i]->r_frame_rate);
+	}
+
+	// 编解码器信息
+	printf("编解码器 => \n", av_codec_context->codec);
+	printf("图像width = %d,height = %d\n", av_codec_context->width, av_codec_context->height);
+	printf("像素格式 = %d\n", av_codec_context->pix_fmt);
+	printf("采样率 = %d\n", av_codec_context->sample_rate);
+	printf("声道数 = %d\n", av_codec_context->ch_layout.nb_channels);
+	printf("采样格式 = %d\n", av_codec_context->sample_fmt);
+	printf("编码器名字 = %s\n", avcodec_dec->name);
+	printf("编码器长名字 = %s\n", avcodec_dec->long_name);
+	printf("编码器类型 = %d\n", avcodec_dec->type);
+	printf("编码器ID = %d\n", avcodec_dec->id);
+
 
 	return 0;
 }

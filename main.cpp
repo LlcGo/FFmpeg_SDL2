@@ -103,6 +103,38 @@ int main(int argc, char* argv[]) {
 	printf("编码器类型 = %d\n", avcodec_dec->type);
 	printf("编码器ID = %d\n", avcodec_dec->id);
 
+	// AVPacket
+	printf("时间戳 => %d \n", avf_context->streams[videoindex]->attached_pic.pts);
+	printf("解码器 => %d \n", avf_context->streams[videoindex]->attached_pic.dts);
+	printf("压缩数据 => %d \n", avf_context->streams[videoindex]->attached_pic.data);
+	printf("数据大小 => %d \n", avf_context->streams[videoindex]->attached_pic.size);
+	printf("所属的AVStream => %d \n", avf_context->streams[videoindex]->attached_pic.stream_index);
+
+	// 1. 分配 packet 和 frame
+	AVPacket* pkt = av_packet_alloc();
+	AVFrame* frame = av_frame_alloc();   // ← AVFrame 在这里
+
+	// 2. 循环读 packet
+	while (av_read_frame(avf_context, pkt) >= 0) {
+		if (pkt->stream_index == videoindex) {
+			// 3. 送 packet 给解码器
+			avcodec_send_packet(av_codec_context, pkt);
+
+			// 4. 收解码出来的帧
+			while (avcodec_receive_frame(av_codec_context, frame) == 0) {
+				// ★ 这里 frame 里才有真正的数据
+				// frame->data[0], frame->data[1], frame->data[2]
+				// frame->linesize[0..2]
+				// frame->width, frame->height, frame->format
+				printf("解码出一帧: %dx%d, format=%d\n",
+					frame->width, frame->height, frame->format);
+			}
+		}
+		av_packet_unref(pkt);
+	}
+
+	av_frame_free(&frame);
+	av_packet_free(&pkt);
 
 	return 0;
 }

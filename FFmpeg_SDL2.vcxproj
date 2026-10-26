@@ -149,6 +149,7 @@
     <ClCompile Include="FFmpeg_SDL2.cpp" />
     <ClCompile Include="aimain.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SDL_Learn.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

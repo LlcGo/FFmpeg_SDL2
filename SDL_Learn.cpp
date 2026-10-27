@@ -14,6 +14,14 @@
 #define winH  720
 #define FRAME_SIZE (winW * winH * 3 / 2)
 
+/**
+* FRAME_SIZE = Y + U + V
+           = winW×winH + (winW/2)×(winH/2) + (winW/2)×(winH/2)
+           = winW×winH + winW×winH/4 + winW×winH/4
+           = winW×winH × (1 + 1/4 + 1/4)
+           = winW×winH × 3/2
+**/
+
 
 int main(int argc, char* argv[])
 {

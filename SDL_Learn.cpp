@@ -95,12 +95,12 @@ int main(int argc, char* argv[])
 		SDL_UpdateYUVTexture(
 			texture,
 			NULL,                          // 更新整个纹理
-			yuv_data,                      // Y 平面指针
+			yuv_data,                      // Y 平面指针  4：满的
 			1280,                          // Y 平面 pitch
 			yuv_data + 1280 * 720,         // U 平面指针（紧跟 Y 之后）
-			640,                           // U 平面 pitch（宽度一半）
+			640,                           // U 平面 pitch（宽度一半） 这个是一个U的内存长度
 			yuv_data + 1280 * 720 * 5 / 4, // V 平面指针
-			640                            // V 平面 pitch
+			640                            // V 平面 pitch 这个是V的内存长度
 		);
 		SDL_RenderClear(sdl_render);
 		SDL_RenderCopy(sdl_render, texture, NULL, NULL);

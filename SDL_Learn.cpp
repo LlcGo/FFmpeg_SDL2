@@ -13,6 +13,7 @@
 #define winW  1280
 #define winH  720
 #define FRAME_SIZE (winW * winH * 3 / 2)
+int  DelayTime = 20;
 
 /**
 * FRAME_SIZE = Y + U + V
@@ -77,6 +78,18 @@ int main(int argc, char* argv[])
 			if (event.type == SDL_QUIT) {
 				quit = 1;
 			}
+			if (event.type == SDL_KEYDOWN) {
+				switch (event.key.keysym.sym) {
+				case SDLK_LEFT:
+					printf("← 左键按下\n");
+					DelayTime += 20;
+					break;
+				case SDLK_RIGHT:
+					DelayTime -= 20;
+					printf("→ 右键按下\n");
+					break;
+				}
+			}
 		}
 		size_t n = fread(yuv_data, 1, FRAME_SIZE, fp);
 
@@ -105,13 +118,13 @@ int main(int argc, char* argv[])
 		SDL_RenderClear(sdl_render);
 		SDL_RenderCopy(sdl_render, texture, NULL, NULL);
 		SDL_RenderPresent(sdl_render);
-		SDL_Delay(20);
+		SDL_Delay(DelayTime);
 	}
 
-		free(yuv_data);
-		fclose(fp);
-		SDL_DestroyTexture(texture);
-		SDL_DestroyRenderer(sdl_render);
-		SDL_DestroyWindow(sdl_window);
-		SDL_Quit();
+	free(yuv_data);
+	fclose(fp);
+	SDL_DestroyTexture(texture);
+	SDL_DestroyRenderer(sdl_render);
+	SDL_DestroyWindow(sdl_window);
+	SDL_Quit();
 }

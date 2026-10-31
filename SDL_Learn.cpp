@@ -14,6 +14,7 @@
 #define winH  720
 #define FRAME_SIZE (winW * winH * 3 / 2)
 int  DelayTime = 20;
+bool flag = true;
 
 /**
 * FRAME_SIZE = Y + U + V
@@ -88,36 +89,45 @@ int main(int argc, char* argv[])
 					DelayTime -= 20;
 					printf("→ 右键按下\n");
 					break;
+				case SDLK_SPACE:
+					printf("空格：切换暂停\n");
+					flag = !flag;          // 需要一个 int paused = 0; 变量
+					break;
 				}
 			}
 		}
-		size_t n = fread(yuv_data, 1, FRAME_SIZE, fp);
 
-		if (n < FRAME_SIZE) {
-			// 读到文件末尾，回到开头循环播放
-			if (feof(fp)) {
-				fseek(fp, 0, SEEK_SET);
-				n = fread(yuv_data, 1, FRAME_SIZE, fp);
-			}
+		if (flag)
+		{
+			size_t n = fread(yuv_data, 1, FRAME_SIZE, fp);
+
 			if (n < FRAME_SIZE) {
-				SDL_Log("not fill");
-				break;
+				// 读到文件末尾，回到开头循环播放
+				if (feof(fp)) {
+					fseek(fp, 0, SEEK_SET);
+					n = fread(yuv_data, 1, FRAME_SIZE, fp);
+				}
+				if (n < FRAME_SIZE) {
+					SDL_Log("not fill");
+					break;
+				}
 			}
-		}
 
-		SDL_UpdateYUVTexture(
-			texture,
-			NULL,                          // 更新整个纹理
-			yuv_data,                      // Y 平面指针  4：满的
-			1280,                          // Y 平面 pitch
-			yuv_data + 1280 * 720,         // U 平面指针（紧跟 Y 之后）
-			640,                           // U 平面 pitch（宽度一半） 这个是一个U的内存长度
-			yuv_data + 1280 * 720 * 5 / 4, // V 平面指针
-			640                            // V 平面 pitch 这个是V的内存长度
-		);
-		SDL_RenderClear(sdl_render);
-		SDL_RenderCopy(sdl_render, texture, NULL, NULL);
-		SDL_RenderPresent(sdl_render);
+			SDL_UpdateYUVTexture(
+				texture,
+				NULL,                          // 更新整个纹理
+				yuv_data,                      // Y 平面指针  4：满的
+				1280,                          // Y 平面 pitch
+				yuv_data + 1280 * 720,         // U 平面指针（紧跟 Y 之后）
+				640,                           // U 平面 pitch（宽度一半） 这个是一个U的内存长度
+				yuv_data + 1280 * 720 * 5 / 4, // V 平面指针
+				640                            // V 平面 pitch 这个是V的内存长度
+			);
+			SDL_RenderClear(sdl_render);
+			SDL_RenderCopy(sdl_render, texture, NULL, NULL);
+			SDL_RenderPresent(sdl_render);
+		}
+		
 		SDL_Delay(DelayTime);
 	}
 

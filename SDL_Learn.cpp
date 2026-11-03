@@ -35,7 +35,7 @@ std::queue<AVFrame*> q;
 std::condition_variable cv;
 bool done = false;
 
-/**
+/** 回看代码
 * FRAME_SIZE = Y + U + V
            = winW×winH + (winW/2)×(winH/2) + (winW/2)×(winH/2)
            = winW×winH + winW×winH/4 + winW×winH/4
